@@ -1,0 +1,8 @@
+[Unit]
+Description=Sony Controller Battery LED Updater
+
+[Service]
+ExecStart=/usr/bin/sony-battery-led
+
+[Install]
+WantedBy=multi-user.target
