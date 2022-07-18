@@ -6,9 +6,7 @@ It doesn't require any user interaction and supports no configuration. It automa
 
 Here is my controller going from fully charged to empty:
 
-<img width="30%" src="images/full.jpg" alt="fully charged controller with a green LED">
-<img width="30%" src="images/half.jpg" alt="half charged controller with a yellow LED">
-<img width="30%" src="images/empty.jpg" alt="empty controller with a red LED">
+<img width="30%" src="images/full.jpg" alt="fully charged controller with a green LED"> <img width="30%" src="images/half.jpg" alt="half charged controller with a yellow LED"> <img width="30%" src="images/empty.jpg" alt="empty controller with a red LED">
 
 ## Compiling and installing
 
