@@ -1,15 +1,16 @@
 mod upower;
 
+use anyhow::{anyhow, Result};
 use async_std::{prelude::*, task};
 use glob::glob;
 use palette::{rgb::Rgb, Hsv, IntoColor};
-use std::{error::Error, fs::write};
+use std::fs::write;
 use upower::{UPowerDeviceProxy, UPowerProxy};
 use zbus::{zvariant::ObjectPath, Connection};
 
 const BRIGHTNESS: f64 = 0.2;
 
-fn update_color(native_path: &str, percentage: f64) -> Result<(), Box<dyn Error>> {
+fn update_color(native_path: &str, percentage: f64) -> Result<()> {
     let color = Hsv::new(percentage / 100.0 * 120.0, 1.0, BRIGHTNESS);
     let (r, g, b) = IntoColor::<Rgb<_, _>>::into_color(color)
         .into_format::<u8>()
@@ -22,17 +23,14 @@ fn update_color(native_path: &str, percentage: f64) -> Result<(), Box<dyn Error>
             "/sys/class/power_supply/{native_path}/device/leds/*:{channel}/brightness",
         ))?
         .next()
-        .ok_or(format!("Missing LED for color {channel}"))??;
+        .ok_or(anyhow!("Missing LED for color {channel}"))??;
         write(led_path, value.to_string())?;
     }
 
     Ok(())
 }
 
-async fn handle_device(
-    connection: &Connection,
-    path: ObjectPath<'_>,
-) -> Result<(), Box<dyn Error>> {
+async fn handle_device(connection: &Connection, path: ObjectPath<'_>) -> Result<()> {
     if !path.contains("gaming_input_sony_controller_battery") {
         return Ok(());
     }
@@ -59,7 +57,7 @@ async fn handle_device(
 }
 
 #[async_std::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+async fn main() -> Result<()> {
     let connection = Connection::system().await?;
     let upower = UPowerProxy::new(&connection).await?;
 
