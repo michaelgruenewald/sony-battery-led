@@ -1,6 +1,6 @@
 [package]
 name = "sony-battery-led"
-license = "GPL"
+license = "GPL-2.0-only"
 authors = ["Michael Gruenewald <mail@michaelgruenewald.eu>"]
 version = "0.1.0"
 edition = "2021"
