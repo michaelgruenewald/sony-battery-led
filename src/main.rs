@@ -11,7 +11,7 @@ use zbus::{zvariant::ObjectPath, Connection};
 const BRIGHTNESS: f64 = 0.2;
 
 fn update_color(native_path: &str, percentage: f64) -> Result<()> {
-    let color = Hsv::new(percentage / 100.0 * 120.0, 1.0, BRIGHTNESS);
+    let color = Hsv::new_srgb(percentage / 100.0 * 120.0, 1.0, BRIGHTNESS);
     let (r, g, b) = IntoColor::<Rgb<_, _>>::into_color(color)
         .into_format::<u8>()
         .into_components();
