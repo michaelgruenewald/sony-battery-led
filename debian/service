@@ -1,5 +1,5 @@
 [Unit]
-Description=Sony Controller Battery LED Updater
+Description=Sony Game Controller Battery LED Updater
 
 [Service]
 ExecStart=/usr/bin/sony-battery-led

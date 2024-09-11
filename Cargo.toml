@@ -1,8 +1,9 @@
 [package]
 name = "sony-battery-led"
+description = "Sony Game Controller Battery LED Updater"
 license = "GPL-2.0-only"
 authors = ["Michael Gruenewald <mail@michaelgruenewald.eu>"]
-version = "0.1.2"
+version = "0.2.0"
 edition = "2021"
 
 [dependencies]
