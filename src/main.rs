@@ -3,16 +3,18 @@ mod upower;
 use anyhow::{anyhow, Result};
 use async_std::{prelude::*, task};
 use glob::glob;
-use palette::{rgb::Rgb, Hsv, IntoColor};
+use palette::{FromColor, Mix, OklabHue, Oklch, Srgb};
 use std::fs::write;
 use upower::{UPowerDeviceProxy, UPowerProxy};
 use zbus::{zvariant::ObjectPath, Connection};
 
-const BRIGHTNESS: f64 = 0.2;
+const BRIGHTNESS: f64 = 0.25;
+const COLOR_EMPTY: Oklch<f64> = Oklch::new_const(BRIGHTNESS, 0.15, OklabHue::new(40.0));
+const COLOR_FULL: Oklch<f64> = Oklch::new_const(BRIGHTNESS, 0.15, OklabHue::new(145.0));
 
 fn update_color(native_path: &str, percentage: f64) -> Result<()> {
-    let color = Hsv::new_srgb(percentage / 100.0 * 120.0, 1.0, BRIGHTNESS);
-    let (r, g, b) = IntoColor::<Rgb<_, _>>::into_color(color)
+    let color = COLOR_EMPTY.mix(COLOR_FULL, percentage / 100.0);
+    let (r, g, b) = Srgb::from_color(color)
         .into_format::<u8>()
         .into_components();
 
