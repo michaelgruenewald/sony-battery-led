@@ -31,7 +31,7 @@ fn update_color(native_path: &str, percentage: f64) -> Result<()> {
 }
 
 async fn handle_device(connection: &Connection, path: ObjectPath<'_>) -> Result<()> {
-    if !path.contains("gaming_input_sony_controller_battery") && !path.contains("gaming_input_ps_controller_battery") {
+    if !path.contains("sony_controller_battery") && !path.contains("ps_controller_battery") {
         return Ok(());
     }
     let device = UPowerDeviceProxy::builder(connection)
