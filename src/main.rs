@@ -1,11 +1,13 @@
 mod upower;
+mod upower_device;
 
 use anyhow::{anyhow, Result};
 use async_std::{prelude::*, task};
 use glob::glob;
 use palette::{FromColor, Mix, OklabHue, Oklch, Srgb};
 use std::fs::write;
-use upower::{UPowerDeviceProxy, UPowerProxy};
+use upower::UPowerProxy;
+use upower_device::UPowerDeviceProxy;
 use zbus::{zvariant::ObjectPath, Connection};
 
 const BRIGHTNESS: f64 = 0.25;
@@ -70,7 +72,7 @@ async fn main() -> Result<()> {
     let mut device_added_stream = upower.receive_device_added().await?;
     while let Some(signal) = device_added_stream.next().await {
         let args = signal.args()?;
-        handle_device(&connection, args.path).await?;
+        handle_device(&connection, args.device).await?;
     }
 
     Ok(())

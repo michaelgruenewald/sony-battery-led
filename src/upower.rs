@@ -1,26 +1,15 @@
-use zbus::zvariant::{ObjectPath, OwnedObjectPath};
-use zbus::{proxy, Result};
-
+use zbus::proxy;
 #[proxy(
-    default_service = "org.freedesktop.UPower",
     interface = "org.freedesktop.UPower",
-    default_path = "/org/freedesktop/UPower"
-)]
-trait UPower {
-    fn enumerate_devices(&self) -> Result<Vec<OwnedObjectPath>>;
-
-    #[zbus(signal)]
-    fn device_added(&self, path: ObjectPath<'_>) -> Result<()>;
-}
-
-#[proxy(
+    default_path = "/org/freedesktop/UPower",
     default_service = "org.freedesktop.UPower",
-    interface = "org.freedesktop.UPower.Device"
+    assume_defaults = true
 )]
-trait UPowerDevice {
-    #[zbus(property)]
-    fn native_path(&self) -> Result<String>;
+pub trait UPower {
+    /// EnumerateDevices method
+    fn enumerate_devices(&self) -> zbus::Result<Vec<zbus::zvariant::OwnedObjectPath>>;
 
-    #[zbus(property)]
-    fn percentage(&self) -> Result<f64>;
+    /// DeviceAdded signal
+    #[zbus(signal)]
+    fn device_added(&self, device: zbus::zvariant::ObjectPath<'_>) -> zbus::Result<()>;
 }

@@ -3,7 +3,7 @@ name = "sony-battery-led"
 description = "Sony Game Controller Battery LED Updater"
 license = "GPL-2.0-only"
 authors = ["Michael Gruenewald <mail@michaelgruenewald.eu>"]
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 
 [dependencies]
@@ -11,7 +11,7 @@ anyhow = "1.0.59"
 async-std = { version = "1.12.0", features = ["attributes"] }
 glob = "0.3.0"
 palette = "0.7.0"
-zbus = "4.4.0"
+zbus = "5.5.0"
 
 [package.metadata.deb]
 maintainer-scripts = "debian/"
