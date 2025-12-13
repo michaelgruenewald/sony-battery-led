@@ -2,9 +2,9 @@ mod upower;
 mod upower_device;
 
 use anyhow::{anyhow, Result};
-use async_std::{prelude::*, task};
 use glob::glob;
 use palette::{FromColor, Mix, OklabHue, Oklch, Srgb};
+use smol::{block_on, prelude::*, spawn};
 use std::fs::write;
 use upower::UPowerProxy;
 use upower_device::UPowerDeviceProxy;
@@ -48,32 +48,33 @@ async fn handle_device(connection: &Connection, path: ObjectPath<'_>) -> Result<
     update_color(&native_path, device.percentage().await?)?;
 
     let mut percentage_changed_stream = device.receive_percentage_changed().await;
-    task::spawn(async move {
+    spawn(async move {
         while let Some(signal) = percentage_changed_stream.next().await {
             let percentage = signal.get().await.unwrap();
             if let Err(e) = update_color(&native_path, percentage) {
                 panic!("Error updating the color: {}", e)
             }
         }
-    });
+    })
+    .detach();
 
     Ok(())
 }
 
-#[async_std::main]
-async fn main() -> Result<()> {
-    let connection = Connection::system().await?;
-    let upower = UPowerProxy::new(&connection).await?;
+fn main() -> Result<()> {
+    block_on(async {
+        let connection = Connection::system().await?;
+        let upower = UPowerProxy::new(&connection).await?;
 
-    for path in upower.enumerate_devices().await? {
-        handle_device(&connection, path.into_inner()).await?;
-    }
+        for path in upower.enumerate_devices().await? {
+            handle_device(&connection, path.into_inner()).await?;
+        }
 
-    let mut device_added_stream = upower.receive_device_added().await?;
-    while let Some(signal) = device_added_stream.next().await {
-        let args = signal.args()?;
-        handle_device(&connection, args.device).await?;
-    }
-
-    Ok(())
+        let mut device_added_stream = upower.receive_device_added().await?;
+        while let Some(signal) = device_added_stream.next().await {
+            let args = signal.args()?;
+            handle_device(&connection, args.device).await?;
+        }
+        Ok(())
+    })
 }
